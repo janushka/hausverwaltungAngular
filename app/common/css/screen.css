@@ -1,0 +1,81 @@
+header h1 small:before {
+    content: "|";
+    margin: 0 0.5em;
+    font-size: 1.6em;
+}
+
+.highlight {
+    clear: none;
+}
+
+.highlight-wrapper {
+    overflow: hidden; /* this is really important to make the float work */
+}
+
+.pub {
+    width: 400px;
+}
+
+.pub a {
+    display: block;
+}
+
+/*@media screen and (min-width: 1261px) {
+    *//* xlarge *//*
+    .highlight {
+        *//* create the needed space for the fixed width column *//*
+        padding-right: 10.75em;
+    }
+}
+
+@media screen and (min-width: 961px) and (max-width: 1260px) {
+    *//* large *//*
+    .highlight {
+        *//* create the needed space for the fixed width column *//*
+        padding-right: 20.75em;
+    }
+}
+
+@media screen and (min-width: 641px) and (max-width: 960px) {
+    *//* medium *//*
+    .highlight {
+        padding-right: 0;
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 640px) {
+    *//* small *//*
+    .highlight {
+        padding-right: 0;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    *//* tiny *//*
+    .highlight {
+        padding-right: 0;
+    }
+}*/
+
+.top-menu {
+    background: #1a1a1a;
+}
+
+.example-title {
+    margin-top: .7em
+}
+
+p.example-title {
+    padding: 0 0 0 .4em;
+    color: #eeebe5;
+    text-align: left;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 2em;
+    line-height: .8;
+    margin: 1em 0 0
+}
+
+p + p.example-title {
+    margin-top: .7em
+}
