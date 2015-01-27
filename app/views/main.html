@@ -2,22 +2,33 @@
 
 <div class="vertical-space"></div>
 
-<table id="booking_list" class="ink-table hover slab-300">
+<table id="booking_list" st-table="rowCollection" class="ink-table hover slab-300">
   <thead class="slab-700">
   <tr>
-    <th class="align-left">Datum</th>
-    <th class="align-left">Anmerkung</th>
-    <th class="align-left">Kategorie</th>
-    <th class="align-left">Betrag (€)</th>
+    <th st-sort="date" class="align-left">Datum</th>
+    <th st-sort="remark" class="align-left">Anmerkung</th>
+    <th st-sort="category" class="align-left">Kategorie</th>
+    <th st-sort="amount" class="align-left">Betrag (€)</th>
     <th class="align-center"></th>
+  </tr>
+  <tr>
+    <th class="slab-300 align-left">
+      <input st-search="date" placeholder="nach Datum" type="search" size="9"/>
+    </th>
+    <th class="slab-300 align-left">
+      <input st-search="remark" placeholder="nach Beschreibung" type="search" size="15"/>
+    </th>
+    <th colspan="3" class="slab-300 align-left">
+      <input st-search="category" placeholder="nach Kategorie" type="search" size="12"/>
+    </th>
   </tr>
   </thead>
   <tbody>
-  <tr>
-    <td>23.02.2015</td>
-    <td>Eine Testbuchung</td>
-    <td>Test</td>
-    <td>5000</td>
+  <tr ng-repeat="row in rowCollection">
+    <td>{{row.date}}</td>
+    <td>{{row.remark}}</td>
+    <td>{{row.category}}</td>
+    <td>{{row.amount}}</td>
     <td class="align-right">
       <button class="ink-button grey"><a href="">Ändern</a></button>
     </td>
