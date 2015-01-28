@@ -11,7 +11,8 @@
     "angular-animate": "~1.2.0",
     "angular-touch": "~1.2.0",
     "angular-route": "~1.2.0",
-    "angular-smart-table": "latest"
+    "angular-smart-table": "latest",
+    "angular-local-storage": "latest"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.0",
