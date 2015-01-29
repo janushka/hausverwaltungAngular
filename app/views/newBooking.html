@@ -8,21 +8,21 @@
 
       <div class="control">
         <input type="text" name="amount" id="new_booking_amount"
-               class="ink-fv-custom positiveIntegerOrDecimal">
+               class="ink-fv-custom positiveIntegerOrDecimal" ng-model="amount">
       </div>
     </div>
     <div class="control-group required all-100">
       <label for="new_booking_datum">Datum</label>
 
       <div class="control">
-        <input type="text" id="new_booking_datum" class="ink-datepicker"/>
+        <input type="text" id="new_booking_datum" class="ink-datepicker" ng-model="date"/>
       </div>
     </div>
     <div class="control-group required all-100">
       <label for="new_booking_category">Kategorie</label>
 
       <div class="control">
-        <select name="category" id="new_booking_category">
+        <select name="category" id="new_booking_category" ng-model="category">
           <option value="test">Test</option>
         </select>
       </div>
@@ -34,13 +34,13 @@
       <label for="new_booking_remark">Anmerkung</label>
 
       <div class="control">
-        <textarea rows="2" cols="20" name="remark" id="new_booking_remark"></textarea>
+        <textarea rows="2" cols="20" name="remark" id="new_booking_remark" ng-model="remark"></textarea>
       </div>
     </div>
     <div class="control-group all-100">
       <div class="control">
         <button id="submit_booking"
-                class="ink-button grey uppercase">buchen
+                class="ink-button grey uppercase" ng-click="submitBooking()">buchen
         </button>
       </div>
     </div>

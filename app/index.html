@@ -47,7 +47,7 @@
     </h1>
   </header>
   <div class="vertical-space">
-    <div class="column-group horizontal-gutters">
+    <div class="column-group horizontal-gutters" ng-controller="ContentController">
       <div class="xlarge-60 large-60 medium-100 small-100 tiny-100">
         <!-- This is were the single page application dynamic takes place -->
         <div ng-view=""></div>
@@ -159,6 +159,7 @@
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-smart-table/dist/smart-table.min.js"></script>
 <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+<script src="common/scripts/rhaboo.min.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
@@ -167,6 +168,7 @@
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/newBooking.js"></script>
 <script src="scripts/controllers/statistics.js"></script>
+<script src="scripts/controllers/content.js"></script>
 <!-- endbuild -->
 </body>
 </html>
