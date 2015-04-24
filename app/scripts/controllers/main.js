@@ -9,6 +9,7 @@
  */
 angular.module('hausverwaltungAngularApp')
   .controller('MainController', function ($scope, localStorageService) {
+
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
@@ -23,9 +24,9 @@ angular.module('hausverwaltungAngularApp')
       {date: '20.01.2015', remark: 'Brooks Laufschuhe', category: 'Kleidungen', amount: 103.95}
     ];
 
-   /*for (var i=0; i<$scope.rowBookingCollection.length; i++) {
+    /*for (var i=0; i<$scope.rowBookingCollection.length; i++) {
      localStorageService.set('booking' + i ,JSON.stringify($scope.rowBookingCollection[i]));
-   }*/
+     }*/
 
     $scope.displayedBookingCollection = [].concat($scope.rowBookingCollection);
   });

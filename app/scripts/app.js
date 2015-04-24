@@ -17,7 +17,8 @@ angular
     'ngSanitize',
     'ngTouch',
     'smart-table',
-    'LocalStorageModule'
+    'LocalStorageModule',
+    'pouchdb'
   ])
   .config(['localStorageServiceProvider', function(localStorageServiceProvider){
     localStorageServiceProvider.setPrefix('ls');
