@@ -12,7 +12,9 @@
     "angular-touch": "~1.2.0",
     "angular-route": "~1.2.0",
     "angular-smart-table": "latest",
-    "angular-local-storage": "latest"
+    "angular-local-storage": "latest",
+    "angular-pouchdb": "~2.0.4",
+    "angular-moment": "~0.10.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.0",
