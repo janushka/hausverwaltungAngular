@@ -17,13 +17,18 @@ angular
         'ngSanitize',
         'ngTouch',
         'smart-table',
-        'pouchdb'
+        'pouchdb',
+        'ngLodash',
+        'angularMoment'
     ])
     .config(function ($routeProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: 'views/main.html',
-                controller: 'MainController'
+                templateUrl: 'views/booking_list.html',
+                controller: 'BookingListCtrl',
+                resolve: {'dbServiceData': function(dbService) {
+                    return dbService.getAllBookings();
+                }}
             })
             .when('/new_booking', {
                 templateUrl: 'views/newBooking.html',
@@ -36,4 +41,23 @@ angular
             .otherwise({
                 redirectTo: '/'
             });
-    });
+    })
+    .config(function (dbServiceProvider) {
+        dbServiceProvider.setDbName('Hausverwaltung');
+        dbServiceProvider.shouldSetDummyData(false);
+    })
+    .run(function (dbService, $rootScope) {
+        $rootScope.wert = 'Janne';
+
+        dbService.initDb();
+        dbService.createDesignDocs();
+        dbService.getAllBookings()
+            .then(function (bookings) {
+                $rootScope.bookings = bookings;
+                console.log('Retrieving bookings...\n' + JSON.stringify(bookings));
+            })
+            .catch(function (error) {
+                console.log('Retrieving bookings failed... ' + error);
+            });
+    }
+);

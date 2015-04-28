@@ -1,0 +1,38 @@
+<p class="example-title">Ausgaben</p>
+
+<div class="vertical-space"></div>
+
+<table id="booking_list" st-table="displayedBookingCollection" st-safe-src="rowBookingCollection"
+       class="ink-table hover slab-300">
+    <thead class="slab-700">
+    <tr>
+        <th st-sort="date" class="align-left">Datum</th>
+        <th st-sort="remark" class="align-left">Anmerkung</th>
+        <th st-sort="category_name" class="align-left">Kategorie</th>
+        <th st-sort="amount" class="align-left">Betrag (€)</th>
+        <th class="align-center"></th>
+    </tr>
+    <tr>
+        <th class="slab-300 align-left">
+            <input st-search="'date'" placeholder=" ... Datum" type="search" size="9"/>
+        </th>
+        <th class="slab-300 align-left">
+            <input st-search="'remark'" placeholder=" ... Beschreibung" type="search" size="15"/>
+        </th>
+        <th colspan="3" class="slab-300 align-left">
+            <input st-search="'category_name'" placeholder=" ... Kategorie" type="search" size="12"/>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="row in displayedBookingCollection">
+        <td>{{row.date}}</td>
+        <td>{{row.remark}}</td>
+        <td>{{row.category_name}}</td>
+        <td>{{row.amount}}</td>
+        <td class="align-right">
+            <button class="ink-button grey"><a href="">Ändern</a></button>
+        </td>
+    </tr>
+    </tbody>
+</table>
