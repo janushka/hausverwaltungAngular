@@ -1,0 +1,50 @@
+<p class="example-title">Buchung ändern</p>
+
+<div class="vertical-space"></div>
+<form id="edit_booking" class="ink-form slab-500">
+    <div id="new_booking_columns" class="column-group gutters" ng-controller="EditBookingCtrl">
+        <div class="control-group required all-100">
+            <label for="edit_booking_amount">Betrag (€)</label>
+
+            <div class="control">
+                <input type="text" name="amount" id="edit_booking_amount"
+                       class="ink-fv-custom positiveIntegerOrDecimal"
+                       ng-model="edit_booking.amount">
+            </div>
+        </div>
+        <div class="control-group required all-100">
+            <label for="edit_booking_datum">Datum</label>
+
+            <div class="control">
+                <input type="text" id="edit_booking_datum" class="ink-datepicker" ng-model="edit_booking.date">
+            </div>
+        </div>
+        <div class="control-group required all-100">
+            <label for="edit_booking_category">Kategorie</label>
+
+            <div class="control">
+                <select name="category" id="edit_booking_category" ng-model="edit_booking.category_name"
+                        ng-options="category.name for category in categories track by category.name">
+                </select>
+            </div>
+        </div>
+        <div class="control-group all-100">
+            <label id='label_edit_booking_remark' for="edit_booking_remark">Anmerkung</label>
+
+            <div class="control">
+                <textarea rows="2" cols="20" name="remark" id="edit_booking_remark"
+                          ng-model="edit_booking.remark"></textarea>
+            </div>
+        </div>
+        <div class="control-group all-100">
+            <div class="control">
+                <button id="save_booking" class="ink-button grey uppercase">speichern
+                </button>
+                <button id="delete_booking"
+                        class="ink-button red uppercase large-push-right xlarge-push-right">
+                    endgültig löschen
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

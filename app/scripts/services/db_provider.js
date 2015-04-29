@@ -1,15 +1,14 @@
 'use strict';
 
-function dbManager () {
+function dbManager() {
     var db;
     var dbName;
     var dummyData = false;
 
-    var test = function() {
-      return null;
-    };
-
     return {
+        _bookings: [],
+        _categories: [],
+
         setDbName: function (name) {
             dbName = name;
         },
@@ -119,6 +118,10 @@ function dbManager () {
 
                 // BOOKINGS //
 
+                getBookings: function () {
+                    return this._bookings;
+                },
+
                 getAllBookings: function () {
                     return db.query('index/booking_index', {
                         include_docs: true
@@ -127,6 +130,7 @@ function dbManager () {
                             bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
                         }
                         let tempBookings = lodash.pluck(bookings.rows, 'doc');
+                        console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
                         return tempBookings;
                     }).catch(function (err) {
                         console.log('The getAllBookings-ERROR: ' + err);
@@ -134,7 +138,16 @@ function dbManager () {
                     });
                 },
 
+                setAllBookings: function (bookings) {
+                    this._bookings = bookings;
+                },
+
                 // CATEGORIES //
+
+                getCategories: function () {
+                    return this._categories;
+                },
+
 
                 getAllCategories: function () {
                     return db.query('index/category_index', {
@@ -146,6 +159,10 @@ function dbManager () {
                         console.log('The getAllCategories-ERROR: ' + err);
                         return err;
                     });
+                },
+
+                setAllCategories: function (categories) {
+                    this._categories = categories;
                 }
             }
         }

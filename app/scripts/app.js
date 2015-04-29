@@ -26,13 +26,30 @@ angular
             .when('/', {
                 templateUrl: 'views/booking_list.html',
                 controller: 'BookingListCtrl',
-                resolve: {'dbServiceData': function(dbService) {
-                    return dbService.getAllBookings();
-                }}
+                resolve: {
+                    'dbServiceBookings': function (dbService) {
+                        console.log('In Config part... \n');
+                        if (dbService.getBookings() != undefined) {
+                            return;
+                        }
+                        return dbService.getAllBookings();
+                    },
+                    'dbServiceCategories': function (dbService) {
+                        console.log('In Config part... \n');
+                        if (dbService.getCategories() != undefined) {
+                            return;
+                        }
+                        return dbService.getAllCategories();
+                    }
+                }
             })
             .when('/new_booking', {
-                templateUrl: 'views/newBooking.html',
-                controller: 'NewBookingController'
+                templateUrl: 'views/new_booking.html',
+                controller: 'NewBookingCtrl'
+            })
+            .when('/edit_booking', {
+                templateUrl: 'views/edit_booking.html',
+                controller: 'EditBookingCtrl'
             })
             .when('/new_category', {
                 templateUrl: 'views/new_category.html',
@@ -47,17 +64,29 @@ angular
         dbServiceProvider.shouldSetDummyData(false);
     })
     .run(function (dbService, $rootScope) {
-        $rootScope.wert = 'Janne';
-
         dbService.initDb();
         dbService.createDesignDocs();
         dbService.getAllBookings()
             .then(function (bookings) {
+                return bookings;
+            }).then(function (bookings) {
                 $rootScope.bookings = bookings;
-                console.log('Retrieving bookings...\n' + JSON.stringify(bookings));
+                console.log('Init bookings...\n' + JSON.stringify(bookings));
+                dbService.setAllBookings(bookings);
             })
             .catch(function (error) {
-                console.log('Retrieving bookings failed... ' + error);
+                console.log('Loading bookings failed... ' + error);
+            });
+        dbService.getAllCategories()
+            .then(function (categories) {
+                return categories;
+            }).then(function (categories) {
+                $rootScope.categories = categories;
+                console.log('Init categories...\n' + JSON.stringify(categories));
+                dbService.setAllCategories(categories);
+            })
+            .catch(function (error) {
+                console.log('Loading categories failed... ' + error);
             });
     }
 );
