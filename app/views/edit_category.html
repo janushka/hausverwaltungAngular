@@ -1,14 +1,14 @@
-<p class="example-title">Kategorie ändern</p>
+<p class="example-title">Kategorie &auml;ndern</p>
 
 <div class="vertical-space"></div>
 <form id="edit_category" class="ink-form slab-500">
-    <div class="column-group gutters">
+    <div class="column-group gutters" ng-controller="EditCategoryCtrl">
         <div class="control-group required all-100">
             <label for="edit_category_name">Name</label>
 
             <div class="control">
                 <input id="edit_category_name" name="name" type="text" class="ink-fv-custom notEmpty"
-                       value="">
+                       ng-model="edit_category.name">
             </div>
         </div>
         <div class="control-group all-100">
@@ -16,7 +16,8 @@
                 <label for="edit_category_description">Beschreibung</label>
 
                 <div class="control">
-                    <textarea rows="2" cols="40" name="description" id="edit_category_description"></textarea>
+                    <textarea rows="2" cols="40" name="description" id="edit_category_description"
+                              ng-model="edit_category.description"></textarea>
                 </div>
             </div>
         </div>
@@ -24,7 +25,7 @@
     <div class="column-group gutters">
         <div class="control-group all-50">
             <div class="control">
-                <button id="save_category" class="ink-button grey uppercase"
+                <button id="save_category" class="ink-button grey uppercase" ng-click="onUpdateCategory()"
                         >speichern
                 </button>
                 <button id="delete_category"

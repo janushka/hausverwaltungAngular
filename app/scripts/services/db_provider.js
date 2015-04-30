@@ -88,6 +88,14 @@ function dbManager() {
                                     }
                                 }.toString()
                             },
+                            some_booking_index: {
+                                map: function mapFun(doc) {
+                                    // sort by date, category_name, amount and type
+                                    if (doc.category_id) {
+                                        emit([doc.date, doc.category_name, doc.amount, doc.type]);
+                                    }
+                                }.toString()
+                            },
                             category_index: {
                                 map: function mapFun(doc) {
                                     // sort by name and type
@@ -130,7 +138,7 @@ function dbManager() {
                             bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
                         }
                         let tempBookings = lodash.pluck(bookings.rows, 'doc');
-                        console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
+                        //console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
                         return tempBookings;
                     }).catch(function (err) {
                         console.log('The getAllBookings-ERROR: ' + err);
@@ -140,6 +148,21 @@ function dbManager() {
 
                 setAllBookings: function (bookings) {
                     this._bookings = bookings;
+                },
+
+                updateBooking: function (booking) {
+                    return db.get(booking.id).then(function (r_booking) {
+                        r_booking.amount = booking.amount;
+                        r_booking.category_id = booking.category_id;
+                        r_booking.category_name = booking.category_name;
+                        r_booking.date = booking.date;
+                        r_booking.remark = booking.remark;
+                        return db.put(r_booking);
+                    }).then(function (response) {
+                        return response.id;
+                    }).catch(function (err) {
+                        console.log('ERROR (Update-Booking): ' + err);
+                    });
                 },
 
                 // CATEGORIES //
@@ -163,6 +186,36 @@ function dbManager() {
 
                 setAllCategories: function (categories) {
                     this._categories = categories;
+                },
+
+                updateCategory: function (category) {
+                    return db.get(category.id).then(function (r_category) {
+                        r_category.name = category.name;
+                        r_category.description = category.description;
+                        return db.put(r_category);
+                    }).then(function (response) {
+                        return db.query('index/some_booking_index', {
+                            key: category.id,
+                            include_docs: true
+                        })
+                    }).catch(function (err) {
+                        console.log('FINDING-ERROR: ' + err);
+                        return;
+                    }).then(function (bookings) {
+                        console.log('The uptodate bookings: ' + JSON.stringify(bookings));
+                        var bookings_to_update = bookings.docs;
+                        for (var i = 0; i < bookings_to_update.length; i++) {
+                            bookings_to_update[i].category_id = category.id;
+                            bookings_to_update[i].category_name = category.name;
+                        }
+                        return db.bulkDocs(bookings_to_update);
+                    }).catch(function (err) {
+                        console.log('Update-Category-ERROR: ' + err);
+                        return;
+                    }).then(function (response) {
+                        //console.log('Update-Booking-RESULT: ' + JSON.stringify(response));
+                        return 'ok';
+                    });
                 }
             }
         }

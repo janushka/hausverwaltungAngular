@@ -1,4 +1,5 @@
-<p class="example-title">Neue Buchung</p>
+<p class="example-title">Neue
+Buchung</p>
 
 <div class="vertical-space"></div>
 <form id="new_booking" class="ink-form slab-500">
@@ -22,13 +23,14 @@
             <label for="new_booking_category">Kategorie</label>
 
             <div class="control">
-                <select name="category" id="new_booking_category" ng-model="new_booking.category_name"
-                        ng-options="category.name for category in categories">
+                <select name="category" id="new_booking_category" ng-model="new_booking.category"
+                        ng-options="category.name for category in categories" ng-change="onChangeCategory()">
                     <option value="">--- Kategorie auswählen ---</option>
                 </select>
             </div>
-            <p class="tip"><a href="">neue Kategorie</a>
-                <span style="padding-left:2em;"><change-category></change-category></span>
+            <p class="tip"><a ng-click="toNewCategory()">neue Kategorie</a>
+                <span style="padding-left:2em;"><change-category ng-bind-html="categorySelected"
+                                                                 ng-click="categoryEnabled ? setCurrentCategory(): ''"></change-category></span>
             </p>
         </div>
         <div class="control-group all-100">

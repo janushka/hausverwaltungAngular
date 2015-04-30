@@ -28,14 +28,14 @@ angular
                 controller: 'BookingListCtrl',
                 resolve: {
                     'dbServiceBookings': function (dbService) {
-                        console.log('In Config part... \n');
+                        //console.log('In Config part... \n');
                         if (dbService.getBookings() != undefined) {
                             return;
                         }
                         return dbService.getAllBookings();
                     },
                     'dbServiceCategories': function (dbService) {
-                        console.log('In Config part... \n');
+                        //console.log('In Config part... \n');
                         if (dbService.getCategories() != undefined) {
                             return;
                         }
@@ -55,6 +55,10 @@ angular
                 templateUrl: 'views/new_category.html',
                 controller: 'NewCategoryCtrl'
             })
+            .when('/edit_category', {
+                templateUrl: 'views/edit_category.html',
+                controller: 'EditCategoryCtrl'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -71,7 +75,7 @@ angular
                 return bookings;
             }).then(function (bookings) {
                 $rootScope.bookings = bookings;
-                console.log('Init bookings...\n' + JSON.stringify(bookings));
+                //console.log('Init bookings...\n' + JSON.stringify(bookings));
                 dbService.setAllBookings(bookings);
             })
             .catch(function (error) {
@@ -82,7 +86,7 @@ angular
                 return categories;
             }).then(function (categories) {
                 $rootScope.categories = categories;
-                console.log('Init categories...\n' + JSON.stringify(categories));
+                //console.log('Init categories...\n' + JSON.stringify(categories));
                 dbService.setAllCategories(categories);
             })
             .catch(function (error) {
