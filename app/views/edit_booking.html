@@ -1,8 +1,8 @@
 <p class="example-title">Buchung ändern</p>
 
 <div class="vertical-space"></div>
-<form id="edit_booking" class="ink-form slab-500">
-    <div id="new_booking_columns" class="column-group gutters" ng-controller="EditBookingCtrl">
+<form id="edit_booking" class="ink-form slab-500" ng-controller="EditBookingCtrl">
+    <div id="new_booking_columns" class="column-group gutters">
         <div class="control-group required all-100">
             <label for="edit_booking_amount">Betrag (€)</label>
 
@@ -24,7 +24,7 @@
 
             <div class="control">
                 <select name="category" id="edit_booking_category" ng-model="edit_booking.category_name"
-                        ng-options="category.name for category in categories track by category.name">
+                        ng-options="category.name for category in categories track by category.name" ng-change="onChangeCategory()">
                 </select>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 <button id="save_booking" class="ink-button grey uppercase" ng-click="onUpdateBooking()">speichern
                 </button>
                 <button id="delete_booking"
-                        class="ink-button red uppercase large-push-right xlarge-push-right">
+                        class="ink-button red uppercase large-push-right xlarge-push-right" ng-click="onDeleteBooking()">
                     endgültig löschen
                 </button>
             </div>

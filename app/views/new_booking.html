@@ -1,51 +1,50 @@
-<p class="example-title">Neue
-Buchung</p>
+<p class="example-title">Neue Buchung</p>
 
 <div class="vertical-space"></div>
-<form id="new_booking" class="ink-form slab-500">
-    <div id="new_booking_columns" class="column-group gutters" ng-controller="NewBookingCtrl">
-        <div class="control-group required all-100">
-            <label for="new_booking_amount">Betrag (€)</label>
+<form id="new_booking" class="ink-form slab-500" ng-controller="NewBookingCtrl">
+  <div id="new_booking_columns" class="column-group gutters">
+    <div class="control-group required all-100">
+      <label for="new_booking_amount">Betrag (€)</label>
 
-            <div class="control">
-                <input type="text" name="amount" id="new_booking_amount"
-                       class="ink-fv-custom positiveIntegerOrDecimal">
-            </div>
-        </div>
-        <div class="control-group required all-100">
-            <label for="new_booking_datum">Datum</label>
+      <div class="control">
+        <input type="text" name="amount" id="new_booking_amount"
+               class="ink-fv-custom positiveIntegerOrDecimal" ng-model="new_booking.amount">
+      </div>
+    </div>
+    <div class="control-group required all-100">
+      <label for="new_booking_datum">Datum</label>
 
-            <div class="control">
-                <input type="text" id="new_booking_datum" class="ink-datepicker"/>
-            </div>
-        </div>
-        <div class="control-group required all-100">
-            <label for="new_booking_category">Kategorie</label>
+      <div class="control">
+        <input type="text" id="new_booking_datum" class="ink-datepicker" ng-model="new_booking.date"/>
+      </div>
+    </div>
+    <div class="control-group required all-100">
+      <label for="new_booking_category">Kategorie</label>
 
-            <div class="control">
-                <select name="category" id="new_booking_category" ng-model="new_booking.category"
-                        ng-options="category.name for category in categories" ng-change="onChangeCategory()">
-                    <option value="">--- Kategorie auswählen ---</option>
-                </select>
-            </div>
-            <p class="tip"><a ng-click="toNewCategory()">neue Kategorie</a>
+      <div class="control">
+        <select name="category" id="new_booking_category" ng-model="new_booking.category"
+                ng-options="category.name for category in categories" ng-change="onChangeCategory()">
+          <option value="">--- Kategorie auswählen ---</option>
+        </select>
+      </div>
+      <p class="tip"><a ng-click="toNewCategory()">neue Kategorie</a>
                 <span style="padding-left:2em;"><change-category ng-bind-html="categorySelected"
                                                                  ng-click="categoryEnabled ? setCurrentCategory(): ''"></change-category></span>
-            </p>
-        </div>
-        <div class="control-group all-100">
-            <label for="new_booking_remark">Anmerkung</label>
-
-            <div class="control">
-                <textarea rows="2" cols="20" name="remark" id="new_booking_remark"></textarea>
-            </div>
-        </div>
-        <div class="control-group all-100">
-            <div class="control">
-                <button id="submit_booking"
-                        class="ink-button grey uppercase">buchen
-                </button>
-            </div>
-        </div>
+      </p>
     </div>
+    <div class="control-group all-100">
+      <label for="new_booking_remark">Anmerkung</label>
+
+      <div class="control">
+        <textarea rows="2" cols="20" name="remark" id="new_booking_remark" ng-model="new_booking.remark"></textarea>
+      </div>
+    </div>
+    <div class="control-group all-100">
+      <div class="control">
+        <button id="submit_booking"
+                class="ink-button grey uppercase" ng-click="onCreateBooking()">buchen
+        </button>
+      </div>
+    </div>
+  </div>
 </form>
