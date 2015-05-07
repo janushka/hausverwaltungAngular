@@ -13,6 +13,7 @@
   <!-- build:css(.tmp) styles/main.css -->
   <link rel="stylesheet" href="styles/ink.min.css">
   <link rel="stylesheet" href="styles/font-awesome.min.css">
+  <link rel="stylesheet" href="styles/angular-flash.css">
   <link rel="stylesheet" href="styles/screen.css">
   <!-- endbuild -->
 </head>
@@ -23,17 +24,17 @@
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<div class="top-menu">
+<div class="top-menu" ng-controller="MenuCtrl">
   <nav class="ink-navigation ink-grid fw-300">
     <ul class="menu horizontal black">
-      <li class=""><a class="uppercase" ng-href="#/">übersicht</a>
+      <li ng-class="{ active: isActive('/') }"><a class="uppercase" ng-href="#/">übersicht</a>
         <ul class="submenu">
           <li><a href="">Ausgabekategorie</a></li>
           <li><a href="">Statistikzeitraum</a></li>
         </ul>
       </li>
-      <li class=""><a class="uppercase" ng-href="#/new_booking">neue Buchung</a></li>
-      <li class=""><a class="uppercase" ng-href="#/new_category">neue kategorie</a></li>
+      <li ng-class="{ active: isActive('/new_booking') }"><a class="uppercase" ng-href="#/new_booking">neue Buchung</a></li>
+      <li ng-class="{ active: isActive('/new_category') }"><a class="uppercase" ng-href="#/new_category">neue kategorie</a></li>
     </ul>
   </nav>
 </div>
@@ -163,8 +164,10 @@
 <script src="bower_components/angular-pouchdb/angular-pouchdb.js"></script>
 <script src="bower_components/moment/moment.js"></script>
 <script src="bower_components/angular-moment/angular-moment.js"></script>
-<script src="bower_components/ng-lodash/build/ng-lodash.min.js"></script>
+<script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
 <!-- endbower -->
+<script src="common/scripts/ink-all.min.js"></script>
+<script src="common/scripts/angular-flash.js"></script>
 <!-- endbuild -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -174,8 +177,9 @@
 <script src="scripts/controllers/new_category.js"></script>
 <script src="scripts/controllers/edit_category.js"></script>
 <script src="scripts/controllers/edit_booking.js"></script>
-<script src="scripts/services/db_provider.js"></script>
 <script src="scripts/controllers/booking_list.js"></script>
+<script src="scripts/controllers/menu.js"></script>
+<script src="scripts/services/db_provider.js"></script>
 <script src="scripts/directives/change_category_link.js"></script>
 <!-- endbuild -->
 

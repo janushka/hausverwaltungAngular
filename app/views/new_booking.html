@@ -1,28 +1,41 @@
 <p class="example-title">Neue Buchung</p>
 
 <div class="vertical-space"></div>
-<form id="new_booking" class="ink-form slab-500" ng-controller="NewBookingCtrl">
+<div flash-message="10000"></div>
+<form novalidate name="form" id="new_booking" class="ink-form slab-500" ng-controller="NewBookingCtrl">
+  <!--<div class="ink-alert basic info" role="alert" ng-show="categories_collection_empty">
+    <button id="close_category_alert" class="ink-dismiss" ng-click="onCloseNoCategories()">&times;</button>
+    <p><b>Info:</b> Kategorie(n) zuvor anlegen.</p>
+  </div>
+  <div class="ink-alert basic success" role="alert" ng-show="booking_created">
+    <button id="close_acknowledge_booking" class="ink-dismiss" ng-click="onCloseBookingCreated()">&times;</button>
+    <p><b>Bestätigung:</b> Buchung erfolgreich gespeichert.</p>
+  </div>-->
   <div id="new_booking_columns" class="column-group gutters">
     <div class="control-group required all-100">
       <label for="new_booking_amount">Betrag (€)</label>
 
       <div class="control">
         <input type="text" name="amount" id="new_booking_amount"
-               class="ink-fv-custom positiveIntegerOrDecimal" ng-model="new_booking.amount">
+               class="ink-fv-custom positiveIntegerOrDecimal" ng-disabled="disable_controls_new_booking" ng-model="new_booking.amount" required ng-minlength="6" ng-maxlength="10">
       </div>
+      <div ng-show="form.$dirty">
+        Betrag ist nicht gültig!
+      </div>
+
     </div>
     <div class="control-group required all-100">
       <label for="new_booking_datum">Datum</label>
 
       <div class="control">
-        <input type="text" id="new_booking_datum" class="ink-datepicker" ng-model="new_booking.date"/>
+        <input type="text" id="new_booking_datum" class="ink-datepicker" ng-disabled="disable_controls_new_booking" ng-model="new_booking.date"/>
       </div>
     </div>
     <div class="control-group required all-100">
       <label for="new_booking_category">Kategorie</label>
 
       <div class="control">
-        <select name="category" id="new_booking_category" ng-model="new_booking.category"
+        <select name="category" id="new_booking_category" ng-disabled="disable_controls_new_booking" ng-model="new_booking.category"
                 ng-options="category.name for category in categories" ng-change="onChangeCategory()">
           <option value="">--- Kategorie auswählen ---</option>
         </select>
@@ -36,13 +49,13 @@
       <label for="new_booking_remark">Anmerkung</label>
 
       <div class="control">
-        <textarea rows="2" cols="20" name="remark" id="new_booking_remark" ng-model="new_booking.remark"></textarea>
+        <textarea rows="2" cols="20" name="remark" id="new_booking_remark" ng-disabled="disable_controls_new_booking" ng-model="new_booking.remark"></textarea>
       </div>
     </div>
     <div class="control-group all-100">
       <div class="control">
         <button id="submit_booking"
-                class="ink-button grey uppercase" ng-click="onCreateBooking()">buchen
+                class="ink-button grey uppercase" ng-disabled="disable_controls_new_booking" ng-click="onCreateBooking()">buchen
         </button>
       </div>
     </div>
