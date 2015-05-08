@@ -155,7 +155,7 @@ function dbManager() {
           let comma = ',';
 
           booking.amount = parseFloat(booking.amount.toString().replace(comma, point));
-          booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
+          //booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
           return db.post(booking).then(function (booking) {
             return booking.id;
           }).catch(function (error) {
@@ -171,7 +171,7 @@ function dbManager() {
             r_booking.amount = parseFloat(booking.amount.toString().replace(comma, point));
             r_booking.category_id = booking.category_id;
             r_booking.category_name = booking.category_name;
-            r_booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
+            //r_booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
             r_booking.remark = booking.remark;
             return db.put(r_booking);
           }).then(function (response) {

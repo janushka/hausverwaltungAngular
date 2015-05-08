@@ -1,21 +1,15 @@
 <p class="example-title">Buchung ändern</p>
 
 <div class="vertical-space"></div>
-<form id="edit_booking" class="ink-form slab-500" ng-controller="EditBookingCtrl">
-  <div class="ink-alert basic success" role="alert" ng-show="booking_updated">
-    <button id="close_acknowledge_edit_booking" class="ink-dismiss" ng-click="onCloseBookingUpdated()">&times;</button>
-    <p><b>Bestätigung:</b> Buchung erfolgreich geändert.</p>
-  </div>
+<div flash-message="3000"></div>
+<form id="edit_booking" name="form" class="ink-form slab-500" ng-controller="EditBookingCtrl" novalidate>
+  <!--
   <div class="ink-alert basic success" role="alert" ng-show="booking_deleted">
     <button id="close_acknowledge_delete_booking" class="ink-dismiss"
             ng-click="onCloseBookingDeleted()">&times;</button>
     <p><b>Bestätigung:</b> Buchung erfolgreich gelöscht.</p>
   </div>
-  <div class="ink-alert basic warning" role="alert" ng-show="booking_no_change">
-    <button id="close_acknowledge_nochanges_booking" class="ink-dismiss"
-            ng-click="onCloseBookingNoChange()">&times;</button>
-    <p><b>Warnung:</b> Keine Änderungen festgestellt. Speichern abgebrochen!</p>
-  </div>
+  </div>-->
 
   <div id="new_booking_columns" class="column-group gutters">
     <div class="control-group required all-100">
@@ -23,15 +17,20 @@
 
       <div class="control">
         <input type="text" name="amount" id="edit_booking_amount"
-               class="ink-fv-custom positiveIntegerOrDecimal" ng-disabled="disable_controls_edit_booking"
+               class="ink-fv-custom positiveIntegerOrDecimal" ng-disabled="disable_controls_edit_booking" required
+               ng-pattern="/^-?[0-9]+(\,[0-9]{1,2})?$/"
                ng-model="edit_booking.amount">
+      </div>
+      <div class="slab-300" style="color:green" ng-show="form.amount.$dirty && form.amount.$error.pattern">
+        Betrag mit oder ohne Komma (z.B. -50 oder 10,25) eingeben.
       </div>
     </div>
     <div class="control-group required all-100">
       <label for="edit_booking_datum">Datum</label>
 
       <div class="control">
-        <input type="text" id="edit_booking_datum" class="ink-datepicker" ng-disabled="disable_controls_edit_booking"
+        <input type="date" id="edit_booking_datum" placeholder="" min="2014-01-01" max="2016-12-31"
+               ng-disabled="disable_controls_edit_booking" required
                ng-model="edit_booking.date">
       </div>
     </div>
@@ -39,8 +38,10 @@
       <label for="edit_booking_category">Kategorie</label>
 
       <div class="control">
-        <select name="category" id="edit_booking_category" ng-disabled="disable_controls_edit_booking" ng-model="edit_booking.category_name"
-                ng-options="category.name for category in categories track by category.name" ng-change="onChangeCategory()">
+        <select name="category" id="edit_booking_category" ng-disabled="disable_controls_edit_booking" required
+                ng-model="edit_booking.category_name"
+                ng-options="category.name for category in categories track by category.name"
+                ng-change="onChangeCategory()">
         </select>
       </div>
     </div>
@@ -55,12 +56,14 @@
     </div>
     <div class="control-group all-100">
       <div class="control">
-        <button id="save_booking" class="ink-button grey uppercase" ng-disabled="disable_controls_edit_booking"
+        <button id="save_booking" class="ink-button grey uppercase"
+                ng-disabled="form.$error.pattern || form.$error.required || disable_controls_edit_booking"
                 ng-click="onUpdateBooking()">speichern
         </button>
         <button id="delete_booking"
                 class="ink-button red uppercase large-push-right xlarge-push-right"
-                ng-disabled="disable_controls_edit_booking" ng-click="onDeleteBooking()">
+                ng-disabled="form.$error.pattern || form.$error.required || disable_controls_edit_booking"
+                ng-click="onDeleteBooking()">
           endgültig löschen
         </button>
       </div>

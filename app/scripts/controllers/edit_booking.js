@@ -8,30 +8,36 @@
  * Controller of the hausverwaltungAngularApp
  */
 angular.module('hausverwaltungAngularApp')
-  .controller('EditBookingCtrl', function ($scope, $rootScope, $location, dbService) {
+  .controller('EditBookingCtrl', function ($scope, $rootScope, $location, dbService, Flash) {
     let point = '.';
     let comma = ',';
-    $scope.edit_booking = new BookingEdit($scope.current_booking._id, $scope.current_booking.amount.toString().replace(point, comma), $scope.current_booking.date, $scope.current_booking.remark, $scope.current_booking.category_id, $scope.current_booking.category_name);
+    $scope.edit_booking = new BookingEdit($scope.current_booking._id, $scope.current_booking.amount.toString().replace(point, comma), moment($scope.current_booking.date, "DD-MM-YYYY").toDate(), $scope.current_booking.remark, $scope.current_booking.category_id, $scope.current_booking.category_name);
     $scope.booking_updated = false;
     $scope.booking_deleted = false;
     $scope.booking_no_change = false;
 
     $scope.onUpdateBooking = function () {
+      if (!$scope.form.$dirty) {
+        Flash.create('warning', '<strong>Warnung:</strong> Keine Änderungen festgestellt. Speichern abgebrochen!');
+        return;
+      }
+
       var booking = $scope.edit_booking;
       booking.amount = $scope.edit_booking.amount;
+      //booking.date = moment($scope.edit_booking.date).startOf('day').toDate();
       booking.date = $scope.edit_booking.date;
       booking.remark = $scope.edit_booking.remark;
       booking.category_id = $scope.edit_booking.category_name._id;
       booking.category_name = $scope.edit_booking.category_name.name;
 
-      var diffDates = $scope.current_booking.date === booking.date;
+      /*var diffDates = $scope.current_booking.date === booking.date;
 
       if (booking.amount === $scope.current_booking.amount.toString().replace(point, comma) && diffDates
         && booking.category_name === $scope.current_booking.category_name && booking.remark === $scope.current_booking.remark) {
         $scope.booking_no_change = true;
         $scope.disable_controls_edit_booking = true;
         return;
-      }
+      }*/
 
       dbService.updateBooking(booking).then(function (response) {
         if (response != undefined) {
@@ -42,8 +48,9 @@ angular.module('hausverwaltungAngularApp')
               $rootScope.bookings = bookings;
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
               dbService.setAllBookings(bookings);
-              $scope.disable_controls_edit_booking = true;
-              $scope.booking_updated = true;
+              //$scope.disable_controls_edit_booking = true;
+              //$scope.booking_updated = true;
+              Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich geändert.');
             })
             .catch(function (error) {
               console.log('Loading bookings failed... ' + error);
@@ -64,8 +71,11 @@ angular.module('hausverwaltungAngularApp')
               $rootScope.bookings = bookings;
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
               dbService.setAllBookings(bookings);
+              $scope.edit_booking = new BookingEdit(null, '', new Date(), '', '', '');
+              //$scope.edit_booking.date = new Date();
               $scope.disable_controls_edit_booking = true;
-              $scope.booking_deleted = true;
+              //$scope.booking_deleted = true;
+              Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich gelöscht.');
             })
             .catch(function (error) {
               console.log('Loading bookings failed... ' + error);
