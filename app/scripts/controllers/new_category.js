@@ -8,9 +8,11 @@
  * Controller of the hausverwaltungAngularApp
  */
 angular.module('hausverwaltungAngularApp')
-  .controller('NewCategoryCtrl', function ($scope, $rootScope, $location, dbService) {
+  .controller('NewCategoryCtrl', function ($scope, $rootScope, $location, dbService, Flash) {
     $scope.category = {};
     $scope.new_category = {};
+
+    $scope.disable_controls_new_category = true;
 
     $scope.onCreateCategory = function () {
       var category = new CategoryNew($scope.new_category.name, $scope.new_category.description);
@@ -20,11 +22,13 @@ angular.module('hausverwaltungAngularApp')
           dbService.getAllCategories()
             .then(function (categories) {
               return categories;
-            }).then(function (categories) {
+            })
+            .then(function (categories) {
               $rootScope.categories = categories;
               //console.log('Init categories...\n' + JSON.stringify(categories));
               dbService.setAllCategories(categories);
-              $location.path('/new_booking');
+              $scope.new_category = new CategoryNew('', '');
+              Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gespeichert.');
             })
             .catch(function (error) {
               console.log('Loading categories failed... ' + error);

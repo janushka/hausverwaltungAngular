@@ -32,12 +32,12 @@ angular.module('hausverwaltungAngularApp')
 
       /*var diffDates = $scope.current_booking.date === booking.date;
 
-      if (booking.amount === $scope.current_booking.amount.toString().replace(point, comma) && diffDates
-        && booking.category_name === $scope.current_booking.category_name && booking.remark === $scope.current_booking.remark) {
-        $scope.booking_no_change = true;
-        $scope.disable_controls_edit_booking = true;
-        return;
-      }*/
+       if (booking.amount === $scope.current_booking.amount.toString().replace(point, comma) && diffDates
+       && booking.category_name === $scope.current_booking.category_name && booking.remark === $scope.current_booking.remark) {
+       $scope.booking_no_change = true;
+       $scope.disable_controls_edit_booking = true;
+       return;
+       }*/
 
       dbService.updateBooking(booking).then(function (response) {
         if (response != undefined) {
@@ -48,8 +48,7 @@ angular.module('hausverwaltungAngularApp')
               $rootScope.bookings = bookings;
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
               dbService.setAllBookings(bookings);
-              //$scope.disable_controls_edit_booking = true;
-              //$scope.booking_updated = true;
+              $scope.edit_booking = new BookingEdit($scope.current_booking._id, booking.amount, booking.date, booking.remark, booking.category_id, booking.category_name);
               Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich geändert.');
             })
             .catch(function (error) {
@@ -72,38 +71,13 @@ angular.module('hausverwaltungAngularApp')
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
               dbService.setAllBookings(bookings);
               $scope.edit_booking = new BookingEdit(null, '', new Date(), '', '', '');
-              //$scope.edit_booking.date = new Date();
               $scope.disable_controls_edit_booking = true;
-              //$scope.booking_deleted = true;
               Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich gelöscht.');
             })
             .catch(function (error) {
               console.log('Loading bookings failed... ' + error);
             });
         }
-      });
-    };
-
-    $scope.onCloseBookingUpdated = function () {
-      Ink.requireModules(['Ink.UI.Close_1'], function (Close) {
-        new Close();  // That was close
-        $location.path('/');
-      });
-    };
-
-    $scope.onCloseBookingDeleted = function () {
-      Ink.requireModules(['Ink.UI.Close_1'], function (Close) {
-        new Close();  // That was close
-        $location.path('/');
-      });
-    };
-
-    $scope.onCloseBookingNoChange = function () {
-      Ink.requireModules(['Ink.UI.Close_1'], function (Close) {
-        $scope.booking_no_change = false;
-        $scope.disable_controls_edit_booking = false;
-
-        $scope.edit_booking = new BookingEdit($scope.current_booking._id, $scope.current_booking.amount.toString().replace(point, comma), $scope.current_booking.date, $scope.current_booking.remark, $scope.current_booking.category_id, $scope.current_booking.category_name);
       });
     };
   });

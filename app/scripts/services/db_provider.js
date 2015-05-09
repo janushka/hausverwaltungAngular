@@ -172,6 +172,7 @@ function dbManager() {
             r_booking.category_id = booking.category_id;
             r_booking.category_name = booking.category_name;
             //r_booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
+            r_booking.date = booking.date;
             r_booking.remark = booking.remark;
             return db.put(r_booking);
           }).then(function (response) {
@@ -238,7 +239,7 @@ function dbManager() {
             console.log('FINDING-ERROR: ' + err);
             return;
           }).then(function (bookings) {
-            console.log('The uptodate bookings: ' + JSON.stringify(bookings.rows));
+            //console.log('The uptodate bookings: ' + JSON.stringify(bookings.rows));
             var bookings_to_update = lodash.pluck(bookings.rows, 'doc');
             for (var i = 0; i < bookings_to_update.length; i++) {
               bookings_to_update[i]._id = bookings_to_update[i]._id;
@@ -253,6 +254,28 @@ function dbManager() {
             //console.log('Update-Booking-RESULT: ' + JSON.stringify(response));
             return 'ok';
           });
+        },
+
+        deleteCategory: function (category) {
+          return db.get(category.id)
+            .then(function (r_category) {
+              return db.remove(r_category);
+            })
+            .then(function (result) {
+              return result.ok;
+            }).catch(function (err) {
+              console.log('ERROR (Delete-Category): ' + err);
+            });
+        },
+
+        // MIX-INS
+        isCategoryAssignedToBooking: function (category) {
+          var type_name = lodash.result(lodash.find(this._bookings, {'category_id': category.id}), 'type');
+          if (type_name === undefined) {
+            return false;
+          } else {
+            return true;
+          }
         }
       }
     }
