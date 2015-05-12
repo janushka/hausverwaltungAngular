@@ -33,8 +33,10 @@
           <li><a href="">Statistikzeitraum</a></li>
         </ul>
       </li>
-      <li ng-class="{ active: isActive('/new_booking') }"><a class="uppercase" ng-href="#/new_booking">neue Buchung</a></li>
-      <li ng-class="{ active: isActive('/new_category') }"><a class="uppercase" ng-href="#/new_category">neue kategorie</a></li>
+      <li ng-class="{ active: isActive('/new_booking') }"><a class="uppercase" ng-href="#/new_booking">neue Buchung</a>
+      </li>
+      <li ng-class="{ active: isActive('/new_category') }"><a class="uppercase" ng-href="#/new_category">neue
+        kategorie</a></li>
     </ul>
   </nav>
 </div>
@@ -58,10 +60,33 @@
         <p class="example-title">Statistik {{ timeRangeTitle }}</p>
 
         <div class="vertical-space"></div>
-        <div class="highlight slab-300">
+        <div class="highlight slab-300" ng-controller="StatisticsController">
+          <div class="column-group horizontal-gutters">
+            <div class="all-70">
+              <div class="uppercase">
+                <ul class="unstyled" ng-repeat="category in categories">
+                  <li>{{category.name}}</li>
+                </ul>
+                <ul class="unstyled">
+                  <li><b>GESAMT</b></li>
+                </ul>
+              </div>
+            </div>
+            <div class="all-30">
+              <div class="push-right">
+                <ul class="unstyled" ng-repeat="amount in amounts">
+                  <li>{{amount}}</li>
+                </ul>
+                <ul class="unstyled">
+                  <li><b>{{total_amount}} €</b></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <div class="column-group horizontal-gutters">
             <div class="xlarge-100 large-100 medium-100 small-100 tiny-100">
-              <form id="statistic_form" class="ink-form" ng-controller="StatisticsController">
+              <form id="statistic_form" class="ink-form" >
                 <fieldset>
                   <div class="control-group">
                     <ul class="control unstyled inline">
@@ -108,7 +133,8 @@
                     <ul class="control unstyled inline">
                       <li>
                         <div class="control all-100">
-                          <button id="statistics_update_button" class="ink-button black" ng-disabled="!updateButton">Aktualisieren
+                          <button id="statistics_update_button" class="ink-button black" ng-disabled="!updateButton"
+                                  ng-click="onLoadAmounts()">Aktualisieren
                           </button>
                         </div>
                       </li>
@@ -129,8 +155,8 @@
   (function (i, s, o, g, r, a, m) {
     i['GoogleAnalyticsObject'] = r;
     i[r] = i[r] || function () {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date();
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
     a = s.createElement(o),
       m = s.getElementsByTagName(o)[0];
     a.async = 1;
@@ -180,6 +206,7 @@
 <script src="scripts/controllers/booking_list.js"></script>
 <script src="scripts/controllers/menu.js"></script>
 <script src="scripts/services/db_provider.js"></script>
+<script src="scripts/services/amounts_provider.js"></script>
 <script src="scripts/directives/change_category_link.js"></script>
 <!-- endbuild -->
 

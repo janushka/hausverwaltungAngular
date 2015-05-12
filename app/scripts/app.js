@@ -78,6 +78,8 @@ angular
         $rootScope.bookings = bookings;
         //console.log('Init bookings...\n' + JSON.stringify(bookings));
         dbService.setAllBookings(bookings);
+        dbService.initObjects();
+        //amountsService.setBookings(bookings);
       })
       .catch(function (error) {
         console.log('Loading bookings failed... ' + error);
@@ -89,6 +91,11 @@ angular
         $rootScope.categories = categories;
         //console.log('Init categories...\n' + JSON.stringify(categories));
         dbService.setAllCategories(categories);
+        //amountsService.setCategories(categories);
+
+        //amountsService.initAmountMap();
+        $rootScope.amounts = dbService.getAmounts();
+        $rootScope.total_amount = dbService.getTotalAmount();
       })
       .catch(function (error) {
         console.log('Loading categories failed... ' + error);

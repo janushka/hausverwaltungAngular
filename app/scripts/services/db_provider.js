@@ -9,6 +9,7 @@ function dbManager() {
     _bookings: [],
     _categories: [],
 
+
     setDbName: function (name) {
       dbName = name;
     },
@@ -19,6 +20,11 @@ function dbManager() {
 
     $get: function (pouchDB, lodash) {
       return {
+        _total_amount: 0,
+        _amounts_map: {},
+        _amounts_values : [],
+        _amounts: {},
+
         initDb: function () {
           // AngularJS will instantiate a singleton by calling "new" on this function
           db = pouchDB('hvDB');
@@ -266,6 +272,58 @@ function dbManager() {
             }).catch(function (err) {
               console.log('ERROR (Delete-Category): ' + err);
             });
+        },
+
+        // AMOUNTS //
+
+        initObjects: function () {
+          this._amounts_map = new Map();
+          this._amounts_values = new Array();
+          this._amounts = new Object();
+        },
+
+        getAmounts: function() {
+          this._amounts_map.clear();
+          this._amounts_values.length = 0;
+          this._total_amount = 0;
+
+          if (this._bookings.length == 0) {
+            this._categories.forEach(function (element, index, array) {
+              this._amounts_map.set(element['name'], 0);
+              this._total_amount = 0;
+            }.bind(this));
+          } else {
+            this._categories.forEach(function (celement, cindex, carray) {
+              this._bookings.forEach(function (belement, bindex, barray) {
+                if (celement['name'] === belement['category_name']) {
+                  var amount = this._amounts_map.get(celement['name']) === undefined ? 0 : this._amounts_map.get(celement['name']);
+                  this._amounts_map.set(celement['name'], amount + belement.amount);
+                } else {
+                  this._amounts_map.set(celement['name'], 0);
+                }
+              }.bind(this));
+            }.bind(this));
+
+            for (var value of this._amounts_map.values()) {
+              console.log(value);
+              this._amounts_values.push(value);
+            }
+
+            this._total_amount = lodash.reduce(lodash.values(this._amounts_values), function (sum, n) {
+              return sum + n;
+            });
+          }
+
+          for (var entry of this._amounts_map.entries()) {
+            console.log(entry[0] + " = " + entry[1]);
+            this._amounts[entry[0]] = entry[1];
+          }
+
+          return this._amounts;
+        },
+
+        getTotalAmount: function () {
+          return this._total_amount;
         },
 
         // MIX-INS

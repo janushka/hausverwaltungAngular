@@ -27,7 +27,10 @@ angular.module('hausverwaltungAngularApp')
               $rootScope.categories = categories;
               //console.log('Init categories...\n' + JSON.stringify(categories));
               dbService.setAllCategories(categories);
-              $scope.new_category = new CategoryNew('', '');
+              dbService.setAllCategories(categories);
+              //var tempAmounts = dbService.getAmounts();
+              $rootScope.amounts = dbService.getAmounts();
+              $rootScope.total_amount = dbService.getTotalAmount();
               Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gespeichert.');
             })
             .catch(function (error) {
