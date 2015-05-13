@@ -98,6 +98,7 @@ function dbManager() {
                 map: function mapFun(doc) {
                   // sort by date, category_name, amount and type
                   if (doc.type === 'booking' && doc.date) {
+                    console.log('Key = ' + Date.parse(doc.date));
                     emit([Date.parse(doc.date), doc.category_name, doc.amount, doc.type]);
                   }
                 }.toString()
