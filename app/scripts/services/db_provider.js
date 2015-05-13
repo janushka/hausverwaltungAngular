@@ -22,7 +22,7 @@ function dbManager() {
       return {
         _total_amount: 0,
         _amounts_map: {},
-        _amounts_values : [],
+        _amounts_values: [],
         _amounts: {},
 
         initDb: function () {
@@ -94,6 +94,14 @@ function dbManager() {
                   }
                 }.toString()
               },
+              booking_by_date_index: {
+                map: function mapFun(doc) {
+                  // sort by date, category_name, amount and type
+                  if (doc.type === 'booking' && doc.date) {
+                    emit([Date.parse(doc.date), doc.category_name, doc.amount, doc.type]);
+                  }
+                }.toString()
+              },
               some_booking_index: {
                 map: function mapFun(doc) {
                   // sort by date, category_name, amount and type
@@ -141,10 +149,32 @@ function dbManager() {
             include_docs: true
           }).then(function (bookings) {
             for (var i = 0; i < bookings.rows.length; i++) {
+              //console.log(Date.parse(bookings.rows[i]['doc']['date']));
               bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
             }
             let tempBookings = lodash.pluck(bookings.rows, 'doc');
             //console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
+            return tempBookings;
+          }).catch(function (err) {
+            console.log('The getAllBookings-ERROR: ' + err);
+            return err;
+          });
+        },
+
+        getBookingsByDate: function (beginn, end) {
+
+          return db.query('index/booking_by_date_index', {
+            //key: beginn,
+            startkey: beginn,
+            endkey: end,
+            //descending : true,
+            include_docs: true
+          }).then(function (bookings) {
+            for (var i = 0; i < bookings.rows.length; i++) {
+              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
+            }
+            let tempBookings = lodash.pluck(bookings.rows, 'doc');
+            console.log('Getting bookings by date...\n' + JSON.stringify(tempBookings));
             return tempBookings;
           }).catch(function (err) {
             console.log('The getAllBookings-ERROR: ' + err);
@@ -282,7 +312,7 @@ function dbManager() {
           this._amounts = new Object();
         },
 
-        getAmounts: function() {
+        getAmounts: function () {
           this._amounts_map.clear();
           this._amounts_values.length = 0;
           this._total_amount = 0;
@@ -294,12 +324,16 @@ function dbManager() {
             }.bind(this));
           } else {
             this._categories.forEach(function (celement, cindex, carray) {
-              this._bookings.forEach(function (belement, bindex, barray) {
+              this._amounts_map.set(celement['name'], 0);
+            }.bind(this));
+            /*else {
+             this._amounts_map.set(celement['name'], 0);
+             }*/
+            this._bookings.forEach(function (belement, bindex, barray) {
+              this._categories.forEach(function (celement, cindex, carray) {
                 if (celement['name'] === belement['category_name']) {
                   var amount = this._amounts_map.get(celement['name']) === undefined ? 0 : this._amounts_map.get(celement['name']);
                   this._amounts_map.set(celement['name'], amount + belement.amount);
-                } else {
-                  this._amounts_map.set(celement['name'], 0);
                 }
               }.bind(this));
             }.bind(this));

@@ -45,9 +45,11 @@ angular.module('hausverwaltungAngularApp')
             .then(function (bookings) {
               return bookings;
             }).then(function (bookings) {
-              $rootScope.bookings = bookings;
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
+              $rootScope.bookings = bookings;
               dbService.setAllBookings(bookings);
+              $rootScope.amounts = dbService.getAmounts();
+              $rootScope.total_amount = dbService.getTotalAmount();
               $scope.edit_booking = new BookingEdit($scope.current_booking._id, booking.amount, booking.date, booking.remark, booking.category_id, booking.category_name);
               Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich geändert.');
             })
@@ -67,9 +69,12 @@ angular.module('hausverwaltungAngularApp')
             .then(function (bookings) {
               return bookings;
             }).then(function (bookings) {
-              $rootScope.bookings = bookings;
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
+              $rootScope.bookings = bookings;
               dbService.setAllBookings(bookings);
+              $rootScope.amounts = dbService.getAmounts();
+              $rootScope.total_amount = dbService.getTotalAmount();
+
               $scope.edit_booking = new BookingEdit(null, '', new Date(), '', '', '');
               $scope.disable_controls_edit_booking = true;
               Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich gelöscht.');

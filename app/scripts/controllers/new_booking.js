@@ -31,9 +31,12 @@ angular.module('hausverwaltungAngularApp')
             .then(function (bookings) {
               return bookings;
             }).then(function (bookings) {
-              $rootScope.bookings = bookings;
               //console.log('Init bookings...\n' + JSON.stringify(bookings));
+              $rootScope.bookings = bookings;
               dbService.setAllBookings(bookings);
+              $rootScope.amounts = dbService.getAmounts();
+              $rootScope.total_amount = dbService.getTotalAmount();
+
               $scope.new_booking = new BookingNew('', new Date(), '', '', '');
               Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich gespeichert.');
             })
