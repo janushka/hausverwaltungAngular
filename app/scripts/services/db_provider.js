@@ -98,8 +98,8 @@ function dbManager() {
                 map: function mapFun(doc) {
                   // sort by date, category_name, amount and type
                   if (doc.type === 'booking' && doc.date) {
-                    console.log('Key = ' + Date.parse(doc.date));
-                    emit([Date.parse(doc.date), doc.category_name, doc.amount, doc.type]);
+                    console.log('Key = ' + Date.parse(doc.date) + ' / ' + typeof Date.parse(doc.date));
+                    emit(Date.parse(doc.date), doc.category_name, doc.amount, doc.type);
                   }
                 }.toString()
               },
@@ -153,7 +153,7 @@ function dbManager() {
               //console.log(Date.parse(bookings.rows[i]['doc']['date']));
               bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
             }
-            let tempBookings = lodash.pluck(bookings.rows, 'doc');
+            var tempBookings = lodash.pluck(bookings.rows, 'doc');
             //console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
             return tempBookings;
           }).catch(function (err) {
@@ -163,18 +163,19 @@ function dbManager() {
         },
 
         getBookingsByDate: function (beginn, end) {
-
+          console.log('Begin = ' + beginn + ' / End = ' + end );
           return db.query('index/booking_by_date_index', {
-            //key: beginn,
             startkey: beginn,
             endkey: end,
-            //descending : true,
             include_docs: true
           }).then(function (bookings) {
             for (var i = 0; i < bookings.rows.length; i++) {
+              var myDateNumber = Date.parse(bookings.rows[i]['doc']['date']);
+              var comp = myDateNumber > 1532072800000;
+              console.log('Booking date = ' + myDateNumber + ' Id greater than 1532072800000? ' +  comp);
               bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
             }
-            let tempBookings = lodash.pluck(bookings.rows, 'doc');
+            var tempBookings = lodash.pluck(bookings.rows, 'doc');
             console.log('Getting bookings by date...\n' + JSON.stringify(tempBookings));
             return tempBookings;
           }).catch(function (err) {
@@ -188,8 +189,8 @@ function dbManager() {
         },
 
         createBooking: function (booking) {
-          let point = '.';
-          let comma = ',';
+          var point = '.';
+          var comma = ',';
 
           booking.amount = parseFloat(booking.amount.toString().replace(comma, point));
           //booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
@@ -202,8 +203,8 @@ function dbManager() {
 
         updateBooking: function (booking) {
           return db.get(booking.id).then(function (r_booking) {
-            let point = '.';
-            let comma = ',';
+            var point = '.';
+            var comma = ',';
 
             r_booking.amount = parseFloat(booking.amount.toString().replace(comma, point));
             r_booking.category_id = booking.category_id;
@@ -242,7 +243,7 @@ function dbManager() {
           return db.query('index/category_index', {
             include_docs: true
           }).then(function (categories) {
-            let tempCategories = lodash.pluck(categories.rows, 'doc');
+            var tempCategories = lodash.pluck(categories.rows, 'doc');
             return tempCategories;
           }).catch(function (err) {
             console.log('The getAllCategories-ERROR: ' + err);

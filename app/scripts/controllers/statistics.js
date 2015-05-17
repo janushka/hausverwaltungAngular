@@ -29,6 +29,9 @@ angular.module('hausverwaltungAngularApp')
     $scope.onLoadAmountDay = function () {
       var b_date = moment(new Date()).startOf('day').toDate().getTime();
       var e_date = moment(new Date()).add(2, 'days').startOf('day').toDate().getTime();
+
+      //var b_date = 1532072800000;
+      //var e_date = 1632072800000;
       dbService.getBookingsByDate(b_date, e_date);
     }
   });
