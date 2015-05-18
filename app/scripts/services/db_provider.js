@@ -98,8 +98,15 @@ function dbManager() {
                 map: function mapFun(doc) {
                   // sort by date, category_name, amount and type
                   if (doc.type === 'booking' && doc.date) {
-                    console.log('Key = ' + Date.parse(doc.date) + ' / ' + typeof Date.parse(doc.date));
                     emit(Date.parse(doc.date), doc.category_name, doc.amount, doc.type);
+                  }
+                }.toString()
+              },
+              some_booking_complex_index: {
+                map: function mapFun(doc) {
+                  // sort by date, category_name, amount and type
+                  if (doc.type === 'booking') {
+                    emit([Date.parse(doc.date), doc.category_name, doc.type]);
                   }
                 }.toString()
               },
@@ -139,6 +146,74 @@ function dbManager() {
           });
         },
 
+        // INIT //
+
+        bookFixedDepenses: function (category_name) {
+          db.put({'_id': 'cat_' + category_name.toLowerCase(), 'name': 'Fixkosten', 'beschreibung': 'Meine Fixkosten'})
+            .then(function (result) {
+              console.log('Result: ' + result);
+            }).catch(function (err) {
+              console.log('Error: ' + err);
+            });
+
+          db.get('cat_' + category_name.toLowerCase())
+            .then(function (category) {
+              return category;
+            }).then(function (category) {
+              return db.post({
+                amount: parseFloat(575),
+                date: moment(new Date()).startOf('day').toDate(),
+                category_id: category._id,
+                category_name: category.name,
+                remark: 'Miete',
+                type: 'booking'
+              })
+            }
+          );
+
+          /*db.post({
+           name: 'Essen',
+           description: 'Alles was das Essen außerhalb des Hauses angeht.',
+           type: 'category'
+           }).then(function (categ) {
+           return db.get(categ.id)
+           }).then(function (categ) {
+           return db.post({
+           amount: parseFloat(12.5),
+           date: moment('01.04.2015', "DD-MM-YYYY").toISOString(),
+           category_id: categ._id,
+           category_name: categ.name,
+           remark: 'Sadri Reis (Persien)',
+           type: 'booking'
+           })
+           }).then(function () {
+           return db.post({name: 'Kleidungen', description: 'Hemden und Hosen.', type: 'category'});
+           }).then(function (categ) {
+           return db.get(categ.id)
+           }).then(function (categ) {
+           return db.bulkDocs([
+           {
+           amount: parseFloat(65),
+           date: moment('01.04.2015', "DD-MM-YYYY").toISOString(),
+           category_id: categ._id,
+           category_name: categ.name,
+           remark: 'Ralph Lauren Hemd.',
+           type: 'booking'
+           },
+           {
+           amount: parseFloat(90),
+           date: moment('01.04.2015', "DD-MM-YYYY").toISOString(),
+           category_id: categ._id,
+           category_name: categ.name,
+           remark: 'Lacoste Polo.',
+           type: 'booking'
+           }
+           ]);
+           }).catch(function (error) {
+
+           });*/
+        },
+
         // BOOKINGS //
 
         getBookings: function () {
@@ -163,23 +238,37 @@ function dbManager() {
         },
 
         getBookingsByDate: function (beginn, end) {
-          console.log('Begin = ' + beginn + ' / End = ' + end );
+          console.log('Begin = ' + beginn + ' / End = ' + end);
           return db.query('index/booking_by_date_index', {
             startkey: beginn,
             endkey: end,
             include_docs: true
           }).then(function (bookings) {
             for (var i = 0; i < bookings.rows.length; i++) {
-              var myDateNumber = Date.parse(bookings.rows[i]['doc']['date']);
-              var comp = myDateNumber > 1532072800000;
-              console.log('Booking date = ' + myDateNumber + ' Id greater than 1532072800000? ' +  comp);
               bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
             }
             var tempBookings = lodash.pluck(bookings.rows, 'doc');
-            console.log('Getting bookings by date...\n' + JSON.stringify(tempBookings));
             return tempBookings;
           }).catch(function (err) {
-            console.log('The getAllBookings-ERROR: ' + err);
+            console.log('The getBookingsByDate-ERROR: ' + err);
+            return err;
+          });
+        },
+
+        getBookingsFixed: function (beginn, end, category) {
+          console.log('Begin = ' + beginn + ' / End = ' + end);
+          return db.query('index/some_booking_complex_index', {
+            startkey: [beginn, 'Fixkosten', 'booking'],
+            endkey: [end, 'Fixkosten', 'booking'],
+            include_docs: true
+          }).then(function (bookings) {
+            for (var i = 0; i < bookings.rows.length; i++) {
+              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
+            }
+            var tempBookings = lodash.pluck(bookings.rows, 'doc');
+            return tempBookings;
+          }).catch(function (err) {
+            console.log('The getBookingsByDate-ERROR: ' + err);
             return err;
           });
         },
@@ -193,7 +282,6 @@ function dbManager() {
           var comma = ',';
 
           booking.amount = parseFloat(booking.amount.toString().replace(comma, point));
-          //booking.date = moment(booking.date, "DD-MM-YYYY").toISOString();
           return db.post(booking).then(function (booking) {
             return booking.id;
           }).catch(function (error) {
@@ -256,7 +344,8 @@ function dbManager() {
         },
 
         createCategory: function (category) {
-          return db.post(category).then(function (category) {
+          category._id = 'cat_' + category.name.toLowerCase();
+          return db.put(category).then(function (category) {
             return category.id;
           }).catch(function (error) {
             return 'Category creation failed!';

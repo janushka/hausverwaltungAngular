@@ -8,14 +8,17 @@
  * Controller of the hausverwaltungAngularApp
  */
 angular.module('hausverwaltungAngularApp')
-    .controller('BookingListCtrl', function ($scope, $rootScope, $location) {
-        $scope.rowBookingCollection = $scope.bookings;
-        $scope.displayedBookingCollection = [].concat($scope.rowBookingCollection);
+  .controller('BookingListCtrl', function ($scope, $rootScope, $location) {
+    $scope.rowBookingCollection = $scope.bookings;
+    $scope.displayedBookingCollection = [].concat($scope.rowBookingCollection);
 
-        $scope.setCurrentBooking = function (booking) {
-            console.log('Ändern-Button clicked!');
-            var tempBooking = booking;
-            $rootScope.current_booking = booking;
-            $location.path('/edit_booking');
-        };
-    });
+    $scope.setCurrentBooking = function (booking) {
+      var tempBooking = booking;
+      $rootScope.current_booking = booking;
+      $location.path('/edit_booking');
+    };
+
+    $scope.setMonthlyBookings = function () {
+
+    }
+  });
