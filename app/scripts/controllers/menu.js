@@ -19,8 +19,8 @@ angular.module('hausverwaltungAngularApp')
     $scope.bookFixedExpenses = function () {
       dbService.bookFixedDepenses('Fixkosten');
 
-      var b_date = moment(later.schedule(later.parse.text('on the first day of the month')).prev()).startOf('day').toDate().getTime();
-      var e_date = moment(later.schedule(later.parse.text('on the first day of the month')).prev()).startOf('day').toDate().getTime();
+      var b_date = moment(new Date()).startOf('month').toDate().getTime();
+      var e_date = moment(new Date()).startOf('month').toDate().getTime();
 
       dbService.getBookingsFixed(b_date, e_date)
         .then(function (bookings) {
