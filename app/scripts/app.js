@@ -30,16 +30,16 @@ angular
         resolve: {
           'dbServiceBookings': function (dbService) {
             //console.log('In Config part... \n');
-            if (dbService.getBookings() != undefined) {
+            /*if (dbService.getBookings() != undefined) {
               return;
-            }
+            }*/
             return dbService.getAllBookings();
           },
           'dbServiceCategories': function (dbService) {
             //console.log('In Config part... \n');
-            if (dbService.getCategories() != undefined) {
+            /*if (dbService.getCategories() != undefined) {
               return;
-            }
+            }*/
             return dbService.getAllCategories();
           }
         }
@@ -71,7 +71,18 @@ angular
   .run(function (dbService, $rootScope) {
     dbService.initDb();
     dbService.createDesignDocs();
-    //dbService.shouldBookFixedExpenses(false);
+    dbService.initObjects();
+
+    dbService.listenToDb();
+
+    dbService.monthFixedExpensesExist().then(function (response) {
+      if (response) {
+        console.log('Fixkosten existieren bereits für diesen Monat!');
+      } else {
+        dbService.createMonthFixedExpenses();
+      }
+    });
+
     dbService.getAllBookings()
       .then(function (bookings) {
         return bookings;
@@ -79,11 +90,12 @@ angular
         $rootScope.bookings = bookings;
         //console.log('Init bookings...\n' + JSON.stringify(bookings));
         dbService.setAllBookings(bookings);
-        dbService.initObjects();
+        //dbService.initObjects();
       })
       .catch(function (error) {
         console.log('Loading bookings failed... ' + error);
       });
+
     dbService.getAllCategories()
       .then(function (categories) {
         return categories;

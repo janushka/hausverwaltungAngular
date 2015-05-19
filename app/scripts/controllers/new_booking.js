@@ -13,7 +13,6 @@ angular.module('hausverwaltungAngularApp')
     $scope.new_booking = {};
     $scope.new_booking.date = new Date();
     $scope.categorySelected = 'Kategorie ändern';
-    //$scope.booking_created = false;
 
     if ($scope.categories.length != 0) {
       $scope.disable_controls_new_booking = false;
@@ -27,22 +26,12 @@ angular.module('hausverwaltungAngularApp')
 
       dbService.createBooking(booking).then(function (response) {
         if (response != undefined) {
-          dbService.getAllBookings()
-            .then(function (bookings) {
-              return bookings;
-            }).then(function (bookings) {
-              //console.log('Init bookings...\n' + JSON.stringify(bookings));
-              $rootScope.bookings = bookings;
-              dbService.setAllBookings(bookings);
-              $rootScope.amounts = dbService.getAmounts();
-              $rootScope.total_amount = dbService.getTotalAmount();
-
-              $scope.new_booking = new BookingNew('', new Date(), '', '', '');
-              Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich gespeichert.');
-            })
-            .catch(function (error) {
-              console.log('Loading bookings failed... ' + error);
-            });
+          if (response.error && response.status == 409 && response.name == 'conflict') {
+            Flash.create('danger', '<strong>Fehler:</strong> Buchung existiert bereits.');
+          } else {
+            $scope.new_booking = new BookingNew('', new Date(), '', '', '');
+            Flash.create('success', '<strong>Bestätigung:</strong> Buchung erfolgreich gespeichert.');
+          }
         }
       });
     };
@@ -87,6 +76,5 @@ function BookingNew(amount, date, remark, category_id, category_name) {
   if (category_name != undefined) {
     this.category_name = category_name;
   }
-
   this.type = 'booking';
 }

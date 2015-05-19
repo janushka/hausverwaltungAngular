@@ -15,29 +15,4 @@ angular.module('hausverwaltungAngularApp')
       var active = (viewLocation === $location.path());
       return active;
     };
-
-    $scope.bookFixedExpenses = function () {
-      dbService.bookFixedDepenses('Fixkosten');
-
-      var b_date = moment(new Date()).startOf('month').toDate().getTime();
-      var e_date = moment(new Date()).startOf('month').toDate().getTime();
-
-      dbService.getBookingsFixed(b_date, e_date)
-        .then(function (bookings) {
-          return bookings;
-        }).then(function (bookings) {
-          if (bookings.length == 0) {
-            console.log('Keine Fixkosten!');
-
-          } else {
-            console.log('Fixkosten sind da!');
-          }
-          //dbService.setAllBookings(bookings);
-          //$rootScope.amounts = dbService.getAmounts();
-          //$rootScope.total_amount = dbService.getTotalAmount();
-        })
-        .catch(function (error) {
-          console.log('Loading bookings failed... ' + error);
-        });
-    }
   });

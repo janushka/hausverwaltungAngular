@@ -6,10 +6,6 @@ function dbManager() {
   var dummyData = false;
 
   return {
-    _bookings: [],
-    _categories: [],
-
-
     setDbName: function (name) {
       dbName = name;
     },
@@ -18,8 +14,10 @@ function dbManager() {
       dummyData = flag;
     },
 
-    $get: function (pouchDB, lodash) {
+    $get: function ($rootScope, pouchDB, lodash) {
       return {
+        _bookings: [],
+        _categories: [],
         _total_amount: 0,
         _amounts_map: {},
         _amounts_values: [],
@@ -106,7 +104,7 @@ function dbManager() {
                 map: function mapFun(doc) {
                   // sort by date, category_name, amount and type
                   if (doc.type === 'booking') {
-                    emit([Date.parse(doc.date), doc.category_name, doc.type]);
+                    emit([Date.parse(doc.date), doc.fixed_expense, doc.type]);
                   }
                 }.toString()
               },
@@ -148,26 +146,145 @@ function dbManager() {
 
         // INIT //
 
-        bookFixedDepenses: function (category_name) {
-          db.put({'_id': 'cat_' + category_name.toLowerCase(), 'name': 'Fixkosten', 'beschreibung': 'Meine Fixkosten'})
+        listenToDb: function () {
+          var changes = db.changes({
+            since: 'now',
+            live: true,
+            include_docs: true
+          }).on('change', function (change) {
+            console.log(JSON.stringify(change));
+            this.getAllCategories().then(function (categories) {
+              this.setAllCategories(categories);
+              $rootScope.categories = categories;
+              $rootScope.amounts = this.getAmounts();
+              $rootScope.total_amount = this.getTotalAmount();
+            }.bind(this));
+            this.getAllBookings().then(function (bookings) {
+              this.setAllBookings(bookings);
+              $rootScope.bookings = bookings;
+              $rootScope.amounts = this.getAmounts();
+              $rootScope.total_amount = this.getTotalAmount();
+            }.bind(this));
+          }.bind(this)).on('complete', function (info) {
+            console.log(JSON.stringify(info));
+          }).on('error', function (err) {
+            console.log(err);
+          });
+        },
+
+        // BOOKINGS //
+
+        getBookings: function () {
+          return this._bookings;
+        },
+
+        getAllBookings: function () {
+          return db.query('index/booking_index', {
+            include_docs: true
+          }).then(function (bookings) {
+            for (var i = 0; i < bookings.rows.length; i++) {
+              //console.log(Date.parse(bookings.rows[i]['doc']['date']));
+              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
+            }
+            var tempBookings = lodash.pluck(bookings.rows, 'doc');
+            //console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
+            return tempBookings;
+          }).catch(function (err) {
+            console.log('The getAllBookings-ERROR: ' + err);
+            return err;
+          });
+        },
+
+        getBookingsByDate: function (beginn, end) {
+          console.log('Begin = ' + beginn + ' / End = ' + end);
+          return db.query('index/booking_by_date_index', {
+            startkey: beginn,
+            endkey: end,
+            include_docs: true
+          }).then(function (bookings) {
+            for (var i = 0; i < bookings.rows.length; i++) {
+              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
+            }
+            var tempBookings = lodash.pluck(bookings.rows, 'doc');
+            return tempBookings;
+          }).catch(function (err) {
+            console.log('The getBookingsByDate-ERROR: ' + err);
+            return err;
+          });
+        },
+
+        monthFixedExpensesExist: function () {
+          //console.log('Begin = ' + beginn + ' / End = ' + end);
+          var b_date = moment(new Date()).startOf('month').toDate().getTime();
+          var e_date = moment(new Date()).startOf('month').toDate().getTime();
+
+          return db.query('index/some_booking_complex_index', {
+            startkey: [b_date, true, 'booking'],
+            endkey: [e_date, true, 'booking'],
+            include_docs: true
+          }).then(function (bookings) {
+            // Todo: make the difference between rows and without rows attribute!
+            if (bookings.rows.length == 0) {
+              return false;
+            } else {
+              return true;
+            }
+          }).catch(function (err) {
+            console.log('The currentMonthFixedExpenses-ERROR: ' + err);
+            return err;
+          });
+        },
+
+        setAllBookings: function (bookings) {
+          this._bookings = bookings;
+        },
+
+        createMonthFixedExpenses: function () {
+          db.put({
+            '_id': 'cat_fixkosten',
+            'name': 'Fixkosten',
+            'beschreibung': 'Monatliche Fixkosten.',
+            type: 'category'
+          })
             .then(function (result) {
               console.log('Result: ' + result);
             }).catch(function (err) {
               console.log('Error: ' + err);
             });
 
-          db.get('cat_' + category_name.toLowerCase())
+          db.get('cat_fixkosten')
             .then(function (category) {
               return category;
             }).then(function (category) {
-              return db.post({
-                amount: parseFloat(575),
-                date: moment(new Date()).startOf('day').toDate(),
-                category_id: category._id,
-                category_name: category.name,
-                remark: 'Miete',
-                type: 'booking'
-              })
+              return db.bulkDocs([
+                {
+                  amount: 575,
+                  date: moment(new Date()).startOf('month').toDate(),
+                  category_id: category._id,
+                  category_name: category.name,
+                  remark: 'Miete',
+                  fixed_expense: true,
+                  type: 'booking'
+                },
+                {
+                  amount: 91,
+                  date: moment(new Date()).startOf('month').toDate(),
+                  category_id: category._id,
+                  category_name: category.name,
+                  remark: 'DEW - Strom und Wasser',
+                  fixed_expense: true,
+                  type: 'booking'
+                },
+                {
+                  amount: 250,
+                  date: moment(new Date()).startOf('month').toDate(),
+                  category_id: category._id,
+                  category_name: category.name,
+                  remark: 'Riester Rente',
+                  fixed_expense: true,
+                  type: 'booking'
+                }
+              ]);
             }
           );
 
@@ -212,69 +329,6 @@ function dbManager() {
            }).catch(function (error) {
 
            });*/
-        },
-
-        // BOOKINGS //
-
-        getBookings: function () {
-          return this._bookings;
-        },
-
-        getAllBookings: function () {
-          return db.query('index/booking_index', {
-            include_docs: true
-          }).then(function (bookings) {
-            for (var i = 0; i < bookings.rows.length; i++) {
-              //console.log(Date.parse(bookings.rows[i]['doc']['date']));
-              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
-            }
-            var tempBookings = lodash.pluck(bookings.rows, 'doc');
-            //console.log('Getting bookings...\n' + JSON.stringify(tempBookings));
-            return tempBookings;
-          }).catch(function (err) {
-            console.log('The getAllBookings-ERROR: ' + err);
-            return err;
-          });
-        },
-
-        getBookingsByDate: function (beginn, end) {
-          console.log('Begin = ' + beginn + ' / End = ' + end);
-          return db.query('index/booking_by_date_index', {
-            startkey: beginn,
-            endkey: end,
-            include_docs: true
-          }).then(function (bookings) {
-            for (var i = 0; i < bookings.rows.length; i++) {
-              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
-            }
-            var tempBookings = lodash.pluck(bookings.rows, 'doc');
-            return tempBookings;
-          }).catch(function (err) {
-            console.log('The getBookingsByDate-ERROR: ' + err);
-            return err;
-          });
-        },
-
-        getBookingsFixed: function (beginn, end, category) {
-          console.log('Begin = ' + beginn + ' / End = ' + end);
-          return db.query('index/some_booking_complex_index', {
-            startkey: [beginn, 'Fixkosten', 'booking'],
-            endkey: [end, 'Fixkosten', 'booking'],
-            include_docs: true
-          }).then(function (bookings) {
-            for (var i = 0; i < bookings.rows.length; i++) {
-              bookings.rows[i]['doc']['date'] = moment(Date.parse(bookings.rows[i]['doc']['date'])).format('DD.MM.YYYY');
-            }
-            var tempBookings = lodash.pluck(bookings.rows, 'doc');
-            return tempBookings;
-          }).catch(function (err) {
-            console.log('The getBookingsByDate-ERROR: ' + err);
-            return err;
-          });
-        },
-
-        setAllBookings: function (bookings) {
-          this._bookings = bookings;
         },
 
         createBooking: function (booking) {
@@ -348,7 +402,7 @@ function dbManager() {
           return db.put(category).then(function (category) {
             return category.id;
           }).catch(function (error) {
-            return 'Category creation failed!';
+            return error;
           });
         },
 

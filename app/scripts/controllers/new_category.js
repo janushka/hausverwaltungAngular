@@ -19,22 +19,12 @@ angular.module('hausverwaltungAngularApp')
 
       dbService.createCategory(category).then(function (response) {
         if (response != undefined) {
-          dbService.getAllCategories()
-            .then(function (categories) {
-              return categories;
-            })
-            .then(function (categories) {
-              //console.log('Init categories...\n' + JSON.stringify(categories));
-              $rootScope.categories = categories;
-              dbService.setAllCategories(categories);
-              dbService.setAllCategories(categories);
-              $rootScope.amounts = dbService.getAmounts();
-              $rootScope.total_amount = dbService.getTotalAmount();
-              Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gespeichert.');
-            })
-            .catch(function (error) {
-              console.log('Loading categories failed... ' + error);
-            });
+          if (response.error && response.status == 409 && response.name == 'conflict') {
+            Flash.create('danger', '<strong>Fehler:</strong> Kategorie exiistiert bereits.');
+          } else {
+            $scope.new_category = new CategoryNew('', '');
+            Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gespeichert.');
+          }
         }
       });
     }
@@ -48,6 +38,5 @@ function CategoryNew(name, description) {
   if (description != undefined) {
     this.description = description;
   }
-
   this.type = 'category';
 }

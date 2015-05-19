@@ -16,32 +16,12 @@ angular.module('hausverwaltungAngularApp')
 
       dbService.updateCategory(category).then(function (response) {
         if (response != undefined) {
-          dbService.getAllCategories()
-            .then(function (categories) {
-              return categories;
-            }).then(function (categories) {
-              $rootScope.categories = categories;
-              //console.log('Init categories...\n' + JSON.stringify(categories));
-              dbService.setAllCategories(categories);
-            })
-            .catch(function (error) {
-              console.log('Loading categories failed... ' + error);
-            });
-          dbService.getAllBookings()
-            .then(function (bookings) {
-              return bookings;
-            }).then(function (bookings) {
-              //console.log('Init bookings...\n' + JSON.stringify(bookings));
-              $rootScope.bookings = bookings;
-              dbService.setAllBookings(bookings);
-              $rootScope.amounts = dbService.getAmounts();
-              $rootScope.total_amount = dbService.getTotalAmount();
-              $scope.edit_category = new CategoryEdit($scope.current_category._id, category.name, category.description);
-              Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gespeichert.');
-            })
-            .catch(function (error) {
-              console.log('Loading bookings failed... ' + error);
-            });
+          if (response.error && response.status == 409 && response.name == 'conflict') {
+            Flash.create('danger', '<strong>Fehler:</strong> Kategorie konnte nicht gespeichert werden.');
+          } else {
+            $scope.edit_category = new CategoryEdit($scope.current_category._id, category.name, category.description);
+            Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gespeichert.');
+          }
         }
       });
     };
@@ -54,23 +34,15 @@ angular.module('hausverwaltungAngularApp')
         return;
       }
 
-      dbService.deleteCategory(category).then(function (result) {
-        if (result != undefined) {
-          dbService.getAllCategories()
-            .then(function (categories) {
-              return categories;
-            }).then(function (categories) {
-              $rootScope.categories = categories;
-              dbService.setAllCategories(categories);
-              $rootScope.amounts = dbService.getAmounts();
-              $rootScope.total_amount = dbService.getTotalAmount();
-              $scope.edit_category = new CategoryEdit(null, '', '');
-              $scope.disable_controls_edit_category = true;
-              Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gelöscht.');
-            })
-            .catch(function (error) {
-              console.log('Loading bookings failed... ' + error);
-            });
+      dbService.deleteCategory(category).then(function (response) {
+        if (response != undefined) {
+          if (response.error && response.status == 409 && response.name == 'conflict') {
+            Flash.create('danger', '<strong>Fehler:</strong> Kategorie konnte nicht gelöscht werden.');
+          } else {
+            $scope.edit_category = new CategoryEdit(null, '', '');
+            $scope.disable_controls_edit_category = true;
+            Flash.create('success', '<strong>Bestätigung:</strong> Kategorie erfolgreich gelöscht.');
+          }
         }
       });
     };
