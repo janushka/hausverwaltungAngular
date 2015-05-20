@@ -19,6 +19,9 @@ angular.module('hausverwaltungAngularApp')
     $scope.statistics_begin_date = new Date();
     $scope.statistics_end_date = new Date();
 
+    $scope.statistics = {};
+    $scope.statistics.time_range = 'week_bookings';
+
     $scope.radioDisabled = true;
     $scope.inputDisabled = false;
     $scope.updateButton = false;
@@ -31,8 +34,6 @@ angular.module('hausverwaltungAngularApp')
 
     $scope.$watchGroup(['statistics_begin_date', 'statistics_end_date'],
       function (newValues, oldValues) {
-        //console.log(oldValues);
-        //console.log(newValues);
         if (moment(newValues[0]) !== null && moment(newValues[1]) !== null) {
           if (moment(newValues[0]).isBefore(newValues[1]) || moment(newValues[0]).isSame(newValues[1])) {
             console.log('Is really before!');
@@ -41,14 +42,29 @@ angular.module('hausverwaltungAngularApp')
           }
         }
         $scope.statistics_range_is_invalid = true;
+      });
 
-        /*if (moment(newValues[0]).isBefore(newValues[1])) {
-         console.log('Is really before!');
-         } else if (moment(newValues[0]).isSame(newValues[1])) {
-         console.log('Is same!');
-         } else {
-         console.log('Is after!');
-         }*/
+    $scope.$watchGroup(['radioDisabled', 'statistics.time_range'],
+      function (newValues, oldValues) {
+        if (newValues[0]) {
+          switch (newValues[1]) {
+            case 'day_bookings':
+              $scope.onLoadAmountDay();
+              break;
+            case 'week_bookings':
+              $scope.onLoadAmountWeek();
+              break;
+            case 'month_bookings':
+              $scope.onLoadAmountMonth();
+              break;
+            case 'year_bookings':
+              $scope.onLoadAmountYear();
+              break;
+            case 'all_bookings':
+              $scope.onLoadAmountAll();
+              break;
+          }
+        }
       });
 
     $scope.onLoadAmountDay = function () {

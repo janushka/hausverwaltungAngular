@@ -79,3 +79,7 @@ p.example-title {
 p + p.example-title {
     margin-top: .7em
 }
+
+li {
+  display: inline;
+}

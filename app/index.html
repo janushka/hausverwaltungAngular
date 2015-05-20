@@ -53,7 +53,7 @@
       </div>
       <div class="xlarge-5 large-5 medium-100 small-100 tiny-100"></div>
       <div class="xlarge-35 large-35 medium-100 small-100 tiny-100 left-space">
-        <p class="example-title">Statistik {{ timeRangeTitle }}</p>
+        <p class="example-title">Statistik</p>
 
         <div class="vertical-space"></div>
         <div class="highlight slab-300" ng-controller="StatisticsController">
@@ -87,19 +87,24 @@
                   <div class="control-group">
                     <ul class="control unstyled inline">
                       <li><input type="radio" id="rb_day" name="rb"
-                                 value="day_bookings" ng-disabled="!radioDisabled" ng-click="onLoadAmountDay()"><label
+                                 value="day_bookings" ng-disabled="!radioDisabled"
+                                 ng-model="statistics.time_range"><label
                         for="rb_day">Tag</label></li>
                       <li><input type="radio" id="rb_week" name="rb"
-                                 value="week_bookings" ng-disabled="!radioDisabled" ng-click="onLoadAmountWeek()"><label
+                                 value="week_bookings" ng-disabled="!radioDisabled"
+                                 ng-model="statistics.time_range"><label
                         for="rb_week">Woche</label></li>
                       <li><input type="radio" id="rb_month" name="rb"
-                                 value="month_bookings" ng-disabled="!radioDisabled" ng-click="onLoadAmountMonth()"><label
+                                 value="month_bookings" ng-disabled="!radioDisabled"
+                                 ng-model="statistics.time_range"><label
                         for="rb_month">Monat</label></li>
                       <li><input type="radio" id="rb_year" name="rb"
-                                 value="year_bookings" ng-disabled="!radioDisabled" ng-click="onLoadAmountYear()"><label
+                                 value="year_bookings" ng-disabled="!radioDisabled"
+                                 ng-model="statistics.time_range"><label
                         for="rb_year">Jahr</label></li>
                       <li><input type="radio" id="rb_all" name="rb"
-                                 value="all_bookings" ng-disabled="!radioDisabled" ng-click="onLoadAmountAll()"><label
+                                 value="all_bookings" ng-disabled="!radioDisabled"
+                                 ng-model="statistics.time_range"><label
                         for="rb_all">Alle</label></li>
                     </ul>
                     <ul class="control unstyled inline">
@@ -111,7 +116,8 @@
                     <ul class="control unstyled inline">
                       <li>
                         <div class="control all-100">
-                          <input type="date" id="statistic_begin_datefield" placeholder="yyyy-MM-dd" min="2014-01-01" max="2016-12-31"
+                          <input type="date" id="statistic_begin_datefield" placeholder="yyyy-MM-dd" min="2014-01-01"
+                                 max="2016-12-31"
                                  ng-disabled="!inputDisabled" ng-model="statistics_begin_date"/>
 
                           <p class="tip">Beginn</p>
@@ -119,7 +125,8 @@
                       </li>
                       <li>
                         <div class="control all-100">
-                          <input type="date" id="statistic_end_datefield" placeholder="yyyy-MM-dd" min="2014-01-01" max="2016-12-31"
+                          <input type="date" id="statistic_end_datefield" placeholder="yyyy-MM-dd" min="2014-01-01"
+                                 max="2016-12-31"
                                  ng-disabled="!inputDisabled" ng-model="statistics_end_date"/>
 
                           <p class="tip">Ende</p>
@@ -134,7 +141,8 @@
                     <ul class="control unstyled inline">
                       <li>
                         <div class="control all-100">
-                          <button id="statistics_update_button" class="ink-button black" ng-disabled="!updateButton || statistics_range_is_invalid"
+                          <button id="statistics_update_button" class="ink-button black"
+                                  ng-disabled="!updateButton || statistics_range_is_invalid"
                                   ng-click="onLoadAmountRange()">Aktualisieren
                           </button>
                         </div>
